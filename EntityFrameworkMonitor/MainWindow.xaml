@@ -1,0 +1,71 @@
+﻿<Window x:Class="EntityFrameworkMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:EntityFrameworkMonitor"
+        Title="MainWindow" Height="350" Width="525">
+    <Window.DataContext>
+        <local:MainWindowViewModel />
+    </Window.DataContext>
+    <Window.Resources>
+        <Style x:Key="DataGridSingleLineTextBoxStyle" TargetType="TextBlock">
+            <Setter Property="LineHeight" Value="1" />
+            <Setter Property="TextWrapping" Value="NoWrap" />
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <GroupBox Header="Events">
+        <DataGrid ItemsSource="{Binding DbEventOverviews}" SelectedItem="{Binding SelectedDbEventOverview}" AutoGenerateColumns="False" IsReadOnly="True" >
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Timestamp" Width="100" Binding="{Binding EventTime}" >
+                    </DataGridTextColumn>
+                    <DataGridTextColumn Header="Status" Width="100" Binding="{Binding Status}" >
+                    </DataGridTextColumn>
+                    <DataGridTemplateColumn Header="Description" Width="*" >
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox MaxLines="1" TextWrapping="NoWrap" Text="{Binding Description}" IsReadOnly="True" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Process" Width="100" Binding="{Binding ProcessName}" >
+                    </DataGridTextColumn>
+                </DataGrid.Columns>
+        </DataGrid>
+        </GroupBox>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="70*" />
+                <ColumnDefinition Width="30*"  />
+            </Grid.ColumnDefinitions>
+            <TabControl >
+                <TabItem Header="Sql" >
+                    <TextBlock Text="{Binding SelectedDbEventOverview.DbCommandInfo.CommandText}" />
+                </TabItem>
+                <TabItem Header="Parameters" >
+                    <DataGrid IsReadOnly="True" ItemsSource="{Binding SelectedDbEventOverview.DbCommandInfo.DbParameterInfos}" >
+
+                    </DataGrid>
+                </TabItem>
+                <TabItem Header="Result" >
+                    <TextBlock Text="{Binding SelectedDbEventOverview.Result}" />
+                </TabItem>
+                <TabItem Header="Error" >
+                    <TextBlock Text="{Binding SelectedDbEventOverview.ErrorMessage}" />
+                </TabItem>
+            </TabControl>
+            <GroupBox Grid.Column="1" Header="Most frequent queries">
+                <DataGrid IsReadOnly="True" ItemsSource="{Binding QueryCounts}" >
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Call Stack" />
+                        <DataGridTextColumn Header="Execution Count" SortDirection="Descending" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </GroupBox>
+        </Grid>
+        
+    </Grid>
+</Window>
